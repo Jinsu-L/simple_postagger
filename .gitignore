@@ -1,0 +1,25 @@
+# Ignore all data (training sets, outputs, etc.)
+data/
+data/**
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Virtual environments
+venv/
+.env/ 
