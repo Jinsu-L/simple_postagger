@@ -1,25 +1,24 @@
 """
 train.py
-- 형태소-품사 사전 구축, HMM 파라미터(초기/전이/방출 확률) 추정
+- HMM 파라미터(초기/전이/방출 확률) 추정
+- 형태소-품사 사전 관련 함수는 dictionary.py로 이동
 """
 import pickle
 from collections import defaultdict, Counter
 
-def build_dictionary(sentences):
-    """
-    형태소-품사 쌍 빈도 집계
-    반환: Counter((morph, tag))
-    """
-    morph_tag_counter = Counter()
-    for _, morphs in sentences:
-        for morph, tag in morphs:
-            morph_tag_counter[(morph, tag)] += 1
-    return morph_tag_counter
-
 def estimate_hmm_parameters(sentences):
     """
-    HMM 파라미터(초기, 전이, 방출 확률) 계산
-    반환: (init_probs, trans_probs, emit_probs, tag_set)
+    HMM 파라미터(초기, 전이, 방출, 품사 집합) 계산
+
+    Args:
+        sentences (list): List of (sentence, [(morph, tag), ...]) tuples.
+
+    Returns:
+        tuple: (init_probs, trans_probs, emit_probs, tag_set)
+            - init_probs (dict): 초기 확률
+            - trans_probs (dict): 전이 확률
+            - emit_probs (dict): 방출 확률
+            - tag_set (set): 품사 집합
     """
     tag_set = set()
     init_counter = Counter()
@@ -46,18 +45,10 @@ def estimate_hmm_parameters(sentences):
 def save_model(params, path):
     """
     학습된 파라미터를 pickle로 저장
+
+    Args:
+        params (tuple): (init_probs, trans_probs, emit_probs, tag_set)
+        path (str): 저장할 파일 경로
     """
     with open(path, 'wb') as f:
-        pickle.dump(params, f)
-
-# 최소 테스트 코드 (실행 예시)
-if __name__ == '__main__':
-    # 예시: data/NIKL_MP(v1.1)/preprocessed.pkl
-    input_path = '../data/NIKL_MP(v1.1)/preprocessed.pkl'
-    model_path = '../data/NIKL_MP(v1.1)/hmm_model.pkl'
-    # with open(input_path, 'rb') as f:
-    #     sentences = pickle.load(f)
-    # morph_dict = build_dictionary(sentences)
-    # init_p, trans_p, emit_p, tag_set = estimate_hmm_parameters(sentences)
-    # save_model((init_p, trans_p, emit_p, tag_set), model_path)
-    print('Training module ready.') 
+        pickle.dump(params, f) 

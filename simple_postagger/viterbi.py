@@ -6,20 +6,24 @@ viterbi.py
 def viterbi(obs, states, start_p, trans_p, emit_p):
     """
     비터비 알고리즘으로 최적의 품사 시퀀스 추정
-    obs: 관측 시퀀스(형태소 리스트)
-    states: 품사 리스트
-    start_p: 초기 확률 dict
-    trans_p: 전이 확률 dict
-    emit_p: 방출 확률 dict
-    반환: (최적 품사 시퀀스, score)
+
+    Args:
+        obs (list): 관측 시퀀스(형태소 리스트)
+        states (list): 품사 리스트
+        start_p (dict): 초기 확률
+        trans_p (dict): 전이 확률
+        emit_p (dict): 방출 확률
+
+    Returns:
+        tuple: (최적 품사 시퀀스(list), score(float))
     """
     V = [{}]
     path = {}
-    # 초기화
+
     for y in states:
         V[0][y] = start_p.get(y, 1e-8) * emit_p.get(y, {}).get(obs[0], 1e-8)
         path[y] = [y]
-    # 동적 프로그래밍
+        
     for t in range(1, len(obs)):
         V.append({})
         new_path = {}
@@ -31,12 +35,11 @@ def viterbi(obs, states, start_p, trans_p, emit_p):
             V[t][y] = prob
             new_path[y] = path[state] + [y]
         path = new_path
-    # 종료
+        
     n = len(obs) - 1
     (prob, state) = max((V[n][y], y) for y in states)
     return path[state], prob
 
-# 최소 테스트 코드 (실행 예시)
 if __name__ == '__main__':
     obs = ['나는', '학생이다']
     states = ['NOUN', 'VERB']

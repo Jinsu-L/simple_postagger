@@ -9,12 +9,16 @@ import pickle
 def load_json_corpus(path):
     """
     JSON 파일에서 (문장, [(형태소, 품사)]) 시퀀스 추출
-    반환: List[Tuple[str, List[Tuple[str, str]]]]
+
+    Args:
+        path (str): JSON 파일 경로
+
+    Returns:
+        list: (문장, [(형태소, 품사)]) 튜플의 리스트
     """
     data = []
     with open(path, 'r', encoding='utf-8') as f:
         corpus = json.load(f)
-        # 실제 구조: 최상위에 document, 그 안에 sentence, 그 안에 morpheme
         for doc in corpus.get('document', []):
             for sent in doc.get('sentence', []):
                 sentence = sent.get('form', '')
@@ -26,6 +30,12 @@ def load_json_corpus(path):
 def clean_text(text):
     """
     특수문자, 불필요 태그 등 정제
+
+    Args:
+        text (str): 입력 문자열
+
+    Returns:
+        str: 정제된 문자열
     """
     text = re.sub(r'<[^>]+>', '', text)  # 태그 제거
     text = re.sub(r'[^\w\s가-힣.,!?]', '', text)  # 한글, 영문, 숫자, 공백, 일부 구두점만 남김
@@ -35,16 +45,10 @@ def clean_text(text):
 def save_preprocessed_data(data, output_path):
     """
     전처리된 데이터를 pickle로 저장
+
+    Args:
+        data (list): 전처리된 데이터
+        output_path (str): 저장할 파일 경로
     """
     with open(output_path, 'wb') as f:
-        pickle.dump(data, f)
-
-# 최소 테스트 코드 (실행 예시)
-if __name__ == '__main__':
-    # 예시: data/NIKL_MP(v1.1)/SXMP1902008031.json
-    input_path = '../data/NIKL_MP(v1.1)/SXMP1902008031.json'
-    output_path = '../data/NIKL_MP(v1.1)/preprocessed.pkl'
-    # data = load_json_corpus(input_path)
-    # data = [(clean_text(sent), [(clean_text(m), t) for m, t in morphs]) for sent, morphs in data]
-    # save_preprocessed_data(data, output_path)
-    print('Preprocessing module ready.') 
+        pickle.dump(data, f) 
